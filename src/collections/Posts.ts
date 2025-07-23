@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
 
 export const Posts: CollectionConfig = {
   slug: 'posts',
@@ -9,6 +10,16 @@ export const Posts: CollectionConfig = {
   },
   access: {
     read: () => true,
+  },
+  hooks: {
+    afterRead: [
+      ({ doc }) => {
+        if (doc?.content) {
+          doc.contentHtml = convertLexicalToHTML({ data: doc.content })
+        }
+        return doc
+      },
+    ],
   },
   fields: [
     {
@@ -88,6 +99,11 @@ export const Posts: CollectionConfig = {
       type: 'richText',
       required: true,
       editor: lexicalEditor({}),
+    },
+    {
+      name: 'description',
+      type: 'text',
+      required: false,
     },
     {
       name: 'tags',

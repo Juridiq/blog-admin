@@ -186,6 +186,7 @@ export interface Post {
     };
     [k: string]: unknown;
   };
+  description?: string | null;
   tags?:
     | {
         tag?: string | null;
@@ -309,6 +310,7 @@ export interface PostsSelect<T extends boolean = true> {
   authorImage?: T;
   thumbnail?: T;
   content?: T;
+  description?: T;
   tags?:
     | T
     | {
