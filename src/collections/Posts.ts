@@ -24,26 +24,12 @@ export const Posts: CollectionConfig = {
   fields: [
     {
       name: 'workspace',
-      type: 'radio',
+      type: 'relationship',
+      relationTo: 'workspaces',
       required: true,
-      options: [
-        {
-          label: 'Juridiq',
-          value: 'juridiq',
-        },
-        {
-          label: 'JuriChat',
-          value: 'jurichat',
-        },
-        {
-          label: 'Almendra & Mota',
-          value: 'almendra-e-mota',
-        },
-        {
-          label: 'Meta Assessoria',
-          value: 'meta-assessoria',
-        },
-      ],
+      admin: {
+        position: 'sidebar',
+      },
     },
     {
       name: 'title',
@@ -107,14 +93,10 @@ export const Posts: CollectionConfig = {
     },
     {
       name: 'tags',
-      type: 'array',
+      type: 'relationship',
+      relationTo: 'tags',
+      hasMany: true,
       required: false,
-      fields: [
-        {
-          name: 'tag',
-          type: 'text',
-        },
-      ],
       admin: {
         position: 'sidebar',
       },

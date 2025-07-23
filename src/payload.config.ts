@@ -13,6 +13,8 @@ import { fileURLToPath } from 'url'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Posts } from './collections/Posts'
+import { Tags } from './collections/Tags'
+import { Workspaces } from './collections/Workspaces'
 
 import { en } from 'payload/i18n/en'
 import { pt } from 'payload/i18n/pt'
@@ -27,7 +29,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Posts],
+  collections: [Users, Media, Posts, Tags, Workspaces],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
