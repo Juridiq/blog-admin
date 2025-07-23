@@ -12,6 +12,29 @@ export const Posts: CollectionConfig = {
   },
   fields: [
     {
+      name: 'works',
+      type: 'radio',
+      required: true,
+      options: [
+        {
+          label: 'Juridiq',
+          value: 'juridiq',
+        },
+        {
+          label: 'JuriChat',
+          value: 'jurichat',
+        },
+        {
+          label: 'Almendra & Mota',
+          value: 'almendra-e-mota',
+        },
+        {
+          label: 'Meta Assessoria',
+          value: 'meta-assessoria',
+        },
+      ],
+    },
+    {
       name: 'title',
       type: 'text',
       required: true,

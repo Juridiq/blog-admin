@@ -164,6 +164,7 @@ export interface Media {
  */
 export interface Post {
   id: number;
+  works: 'juridiq' | 'jurichat' | 'almendra-e-mota' | 'meta-assessoria';
   title: string;
   slug: string;
   date: string;
@@ -294,6 +295,7 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "posts_select".
  */
 export interface PostsSelect<T extends boolean = true> {
+  works?: T;
   title?: T;
   slug?: T;
   date?: T;
