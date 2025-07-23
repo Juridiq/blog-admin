@@ -64,14 +64,6 @@ export const Posts: CollectionConfig = {
       },
     },
     {
-      name: 'authorImage',
-      type: 'relationship',
-      relationTo: 'media',
-      admin: {
-        position: 'sidebar',
-      },
-    },
-    {
       name: 'thumbnail',
       type: 'relationship',
       relationTo: 'media',
