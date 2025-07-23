@@ -164,7 +164,7 @@ export interface Media {
  */
 export interface Post {
   id: number;
-  works: 'juridiq' | 'jurichat' | 'almendra-e-mota' | 'meta-assessoria';
+  workspace: 'juridiq' | 'jurichat' | 'almendra-e-mota' | 'meta-assessoria';
   title: string;
   slug: string;
   date: string;
@@ -186,6 +186,12 @@ export interface Post {
     };
     [k: string]: unknown;
   };
+  tags?:
+    | {
+        tag?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -295,7 +301,7 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "posts_select".
  */
 export interface PostsSelect<T extends boolean = true> {
-  works?: T;
+  workspace?: T;
   title?: T;
   slug?: T;
   date?: T;
@@ -303,6 +309,12 @@ export interface PostsSelect<T extends boolean = true> {
   authorImage?: T;
   thumbnail?: T;
   content?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

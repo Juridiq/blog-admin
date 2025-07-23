@@ -54,7 +54,7 @@ export default buildConfig({
   },
   email: nodemailerAdapter({
     defaultFromAddress: 'contato@rafaelalmendra.com',
-    defaultFromName: 'Rafael',
+    defaultFromName: 'Rafael Almendra',
     transportOptions: {
       host: 'smtp.titan.email',
       port: 465,

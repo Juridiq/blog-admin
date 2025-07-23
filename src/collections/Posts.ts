@@ -12,7 +12,7 @@ export const Posts: CollectionConfig = {
   },
   fields: [
     {
-      name: 'works',
+      name: 'workspace',
       type: 'radio',
       required: true,
       options: [
@@ -88,6 +88,20 @@ export const Posts: CollectionConfig = {
       type: 'richText',
       required: true,
       editor: lexicalEditor({}),
+    },
+    {
+      name: 'tags',
+      type: 'array',
+      required: false,
+      fields: [
+        {
+          name: 'tag',
+          type: 'text',
+        },
+      ],
+      admin: {
+        position: 'sidebar',
+      },
     },
   ],
 }
