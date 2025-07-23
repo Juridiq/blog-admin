@@ -1,18 +1,21 @@
-// storage-adapter-import-placeholder
-import { postgresAdapter } from '@payloadcms/db-postgres'
-import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import path from 'path'
 import { buildConfig } from 'payload'
-import { fileURLToPath } from 'url'
+
+import { postgresAdapter } from '@payloadcms/db-postgres'
+import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+
+import path from 'path'
 import sharp from 'sharp'
+import { fileURLToPath } from 'url'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Posts } from './collections/Posts'
+
 import { en } from 'payload/i18n/en'
 import { pt } from 'payload/i18n/pt'
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -49,4 +52,17 @@ export default buildConfig({
   i18n: {
     supportedLanguages: { en, pt },
   },
+  email: nodemailerAdapter({
+    defaultFromAddress: 'contato@rafaelalmendra.com',
+    defaultFromName: 'Rafael',
+    transportOptions: {
+      host: 'smtp.titan.email',
+      port: 465,
+      secure: true,
+      auth: {
+        user: 'contato@rafaelalmendra.com',
+        pass: process.env.SMTP_PASS,
+      },
+    },
+  }),
 })
