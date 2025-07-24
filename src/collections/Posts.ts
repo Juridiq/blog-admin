@@ -4,6 +4,7 @@ import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
 
 export const Posts: CollectionConfig = {
   slug: 'posts',
+  auth: false,
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'author', 'date', 'slug'],
@@ -59,6 +60,9 @@ export const Posts: CollectionConfig = {
       type: 'relationship',
       relationTo: 'users',
       required: true,
+      access: {
+        read: () => true,
+      },
       admin: {
         position: 'sidebar',
       },
