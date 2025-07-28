@@ -72,6 +72,7 @@ export interface Config {
     posts: Post;
     tags: Tag;
     workspaces: Workspace;
+    features: Feature;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -83,6 +84,7 @@ export interface Config {
     posts: PostsSelect<false> | PostsSelect<true>;
     tags: TagsSelect<false> | TagsSelect<true>;
     workspaces: WorkspacesSelect<false> | WorkspacesSelect<true>;
+    features: FeaturesSelect<false> | FeaturesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -220,6 +222,33 @@ export interface Tag {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "features".
+ */
+export interface Feature {
+  id: number;
+  workspace: number | Workspace;
+  title: string;
+  description: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  date: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -244,6 +273,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'workspaces';
         value: number | Workspace;
+      } | null)
+    | ({
+        relationTo: 'features';
+        value: number | Feature;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -363,6 +396,18 @@ export interface TagsSelect<T extends boolean = true> {
 export interface WorkspacesSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "features_select".
+ */
+export interface FeaturesSelect<T extends boolean = true> {
+  workspace?: T;
+  title?: T;
+  description?: T;
+  date?: T;
   updatedAt?: T;
   createdAt?: T;
 }
