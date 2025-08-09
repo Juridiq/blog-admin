@@ -14,6 +14,9 @@ export const Features: CollectionConfig = {
   },
   access: {
     read: () => true,
+    create: () => true,
+    update: () => true,
+    delete: () => true,
   },
   hooks: {
     afterRead: [
@@ -78,6 +81,10 @@ export const Features: CollectionConfig = {
             depth: 0,
             req,
           })
+          if (reads.docs.length === 0) {
+            return Response.json({ total: 0, docs: [] })
+          }
+
           const readIds = new Set(reads.docs.map((r: any) => String(r.feature)))
 
           // 2) traga features e filtre localmente
@@ -90,9 +97,17 @@ export const Features: CollectionConfig = {
           }
 
           const all = await payload.find({ collection: 'features', ...featureQuery })
+          if (all.docs.length === 0) {
+            return Response.json({ total: 0, docs: [] })
+          }
+
           const unread = all.docs.filter((f: any) => !readIds.has(String(f.id)))
 
-          return Response.json({ total: unread.length, docs: unread.slice(0, limit) })
+          return Response.json({
+            total: unread?.length || 0,
+            docs: unread?.slice(0, limit) || [],
+            readIds: Array.from(readIds),
+          })
         } catch {
           return Response.json({ error: 'Internal server error' }, { status: 500 })
         }
