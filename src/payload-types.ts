@@ -73,6 +73,7 @@ export interface Config {
     tags: Tag;
     workspaces: Workspace;
     features: Feature;
+    featureReads: FeatureRead;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -85,6 +86,7 @@ export interface Config {
     tags: TagsSelect<false> | TagsSelect<true>;
     workspaces: WorkspacesSelect<false> | WorkspacesSelect<true>;
     features: FeaturesSelect<false> | FeaturesSelect<true>;
+    featureReads: FeatureReadsSelect<false> | FeatureReadsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -249,6 +251,18 @@ export interface Feature {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "featureReads".
+ */
+export interface FeatureRead {
+  id: number;
+  feature: number | Feature;
+  externalUserId: string;
+  readAt: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -277,6 +291,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'features';
         value: number | Feature;
+      } | null)
+    | ({
+        relationTo: 'featureReads';
+        value: number | FeatureRead;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -408,6 +426,17 @@ export interface FeaturesSelect<T extends boolean = true> {
   title?: T;
   description?: T;
   date?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "featureReads_select".
+ */
+export interface FeatureReadsSelect<T extends boolean = true> {
+  feature?: T;
+  externalUserId?: T;
+  readAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

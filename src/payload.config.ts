@@ -3,7 +3,7 @@ import { buildConfig } from 'payload'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
-import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
+// import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 
 import path from 'path'
@@ -15,6 +15,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Posts } from './collections/Posts'
 import { Features } from './collections/Features'
+import { FeatureReads } from './collections/FeatureReads'
 import { Workspaces } from './collections/Workspaces'
 
 import { en } from 'payload/i18n/en'
@@ -30,7 +31,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Posts, Tags, Workspaces, Features],
+  collections: [Users, Media, Posts, Tags, Workspaces, Features, FeatureReads],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -55,17 +56,17 @@ export default buildConfig({
   i18n: {
     supportedLanguages: { en, pt },
   },
-  email: nodemailerAdapter({
-    defaultFromAddress: 'contato@rafaelalmendra.com',
-    defaultFromName: 'Rafael Almendra',
-    transportOptions: {
-      host: 'smtp.titan.email',
-      port: 465,
-      secure: true,
-      auth: {
-        user: 'contato@rafaelalmendra.com',
-        pass: process.env.SMTP_PASS,
-      },
-    },
-  }),
+  // email: nodemailerAdapter({
+  //   defaultFromAddress: 'contato@rafaelalmendra.com',
+  //   defaultFromName: 'Rafael Almendra',
+  //   transportOptions: {
+  //     host: 'smtp.titan.email',
+  //     port: 465,
+  //     secure: true,
+  //     auth: {
+  //       user: 'contato@rafaelalmendra.com',
+  //       pass: process.env.SMTP_PASS,
+  //     },
+  //   },
+  // }),
 })
