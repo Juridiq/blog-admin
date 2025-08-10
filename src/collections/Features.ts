@@ -61,10 +61,39 @@ export const Features: CollectionConfig = {
   ],
   endpoints: [
     {
+      path: '/debug',
+      method: 'get',
+      handler: async (req: PayloadRequest) => {
+        const payloadInstance = req.payload
+        return Response.json({
+          collections: payloadInstance.collections
+            ? Object.keys(payloadInstance.collections)
+            : 'não definido',
+          hasFeatureReads: !!payloadInstance.collections?.['featureReads'],
+          hasFeatures: !!payloadInstance.collections?.['features'],
+          payloadVersion: payloadInstance.config?.admin
+            ? 'admin configurado'
+            : 'admin não configurado',
+        })
+      },
+    },
+    {
       path: '/unread',
       method: 'get',
       handler: async (req: PayloadRequest) => {
         try {
+          const payloadInstance = req.payload
+
+          console.log('[FEATURES UNREAD] Payload instance:', {
+            hasCollections: !!payloadInstance.collections,
+            collectionsCount: payloadInstance.collections
+              ? Object.keys(payloadInstance.collections).length
+              : 0,
+            collections: payloadInstance.collections
+              ? Object.keys(payloadInstance.collections)
+              : [],
+          })
+
           const userId = req.headers.get('x-user-id') as string
           if (!userId) {
             return Response.json({ error: 'missing userId' }, { status: 400 })
@@ -73,43 +102,70 @@ export const Features: CollectionConfig = {
           const limit = Number(req.query.limit ?? 10)
           const since = req.query.since ? new Date(String(req.query.since)) : undefined
 
-          // 1) leituras do usuário
-          const reads = await payload.find({
-            collection: 'featureReads',
-            where: { externalUserId: { equals: userId } },
-            limit: 10000,
-            depth: 0,
-            req,
-          })
-          if (reads.docs.length === 0) {
-            return Response.json({ total: 0, docs: [] })
+          let reads: { docs: any[] } = { docs: [] }
+          if (payloadInstance.collections['featureReads']) {
+            try {
+              reads = await payloadInstance.find({
+                collection: 'featureReads',
+                where: { externalUserId: { equals: userId } },
+                limit: 10000,
+                depth: 0,
+                req,
+              })
+            } catch (error) {
+              console.error('[FEATURES UNREAD] Erro ao buscar featureReads:', error)
+            }
+          } else {
+            console.error('[FEATURES UNREAD] Collection featureReads não disponível')
           }
 
           const readIds = new Set(reads.docs.map((r: any) => String(r.feature)))
 
-          // 2) traga features e filtre localmente
           const featureQuery: any = { sort: '-date', limit: 100, req }
           if (since) {
             featureQuery.where = {
-              ...(featureQuery.where || {}),
               date: { greater_than_equal: since.toISOString() },
             }
           }
 
-          const all = await payload.find({ collection: 'features', ...featureQuery })
+          if (!payloadInstance.collections['features']) {
+            console.error('[FEATURES UNREAD] Collection features não disponível')
+            return Response.json(
+              {
+                error: 'Features collection not available',
+              },
+              { status: 503 },
+            )
+          }
+
+          const all = await payloadInstance.find({ collection: 'features', ...featureQuery })
+
           if (all.docs.length === 0) {
             return Response.json({ total: 0, docs: [] })
           }
 
           const unread = all.docs.filter((f: any) => !readIds.has(String(f.id)))
 
-          return Response.json({
+          const result = {
             total: unread?.length || 0,
             docs: unread?.slice(0, limit) || [],
             readIds: Array.from(readIds),
+          }
+
+          return Response.json(result)
+        } catch (error) {
+          console.error('[FEATURES UNREAD] Erro capturado:', {
+            message: error instanceof Error ? error.message : 'Erro desconhecido',
+            stack: error instanceof Error ? error.stack : undefined,
+            error,
           })
-        } catch {
-          return Response.json({ error: 'Internal server error' }, { status: 500 })
+          return Response.json(
+            {
+              error: 'Internal server error',
+              details: error instanceof Error ? error.message : 'Erro desconhecido',
+            },
+            { status: 500 },
+          )
         }
       },
     },
@@ -118,6 +174,8 @@ export const Features: CollectionConfig = {
       method: 'post',
       handler: async (req: PayloadRequest) => {
         try {
+          const payloadInstance = req.payload
+
           const userId = req.headers.get('x-user-id') as string
           if (!userId) {
             return Response.json({ error: 'missing userId' }, { status: 400 })
@@ -132,7 +190,7 @@ export const Features: CollectionConfig = {
           const results = await Promise.allSettled(
             ids.map(async (featureId) => {
               try {
-                const existing = await payload.find({
+                const existing = await payloadInstance.find({
                   collection: 'featureReads',
                   where: {
                     and: [
@@ -144,7 +202,7 @@ export const Features: CollectionConfig = {
                   req,
                 })
                 if (existing.docs.length === 0) {
-                  await payload.create({
+                  await payloadInstance.create({
                     collection: 'featureReads',
                     data: {
                       feature: Number(featureId),
